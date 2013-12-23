@@ -1,0 +1,229 @@
+﻿<html>
+<head>
+    <title>jQuery Roadmap plugin</title>
+    <script src="jQuery.min.js"></script>
+    <script src="jquery.roadmap.js"></script>
+    <link href="jquery.roadmap.css" rel="stylesheet" />
+    <link href="index.css" rel="stylesheet" />
+    <link href="index.js" rel="stylesheet" />
+</head>
+<body>
+    <script>
+        var userData = {
+            login: "",
+            email: "",
+            initials: "",
+            phone: "",
+            birth: "",
+            workplace: "",
+            liveplace: "",
+            workpost: "",
+            groups: []
+        };
+
+        $(function () {
+
+            var rmp = $("#rmp").Roadmap({
+                width: 650,
+                allowJump: true,
+                checkpoints: [
+                    { text: "Учетные данные" },
+                    { text: "Персональные данные" },
+                    { text: "Интересующие ленты" },
+                    { text: "Завершение регистрации" }
+                ],
+                voyagerPosition: 0,
+                onInit: function () { $(".account").show(); },
+                checkpointClickEvent: function (waypoint) {
+                    switch (waypoint) {
+                        case 0:
+                            $("div.form").hide()
+                            $("div.account").show();
+                            return;
+
+                        case 1:
+                            $("div.form").hide()
+                            $("div.personal").show();
+                            return;
+
+                        case 2:
+                            $("div.form").hide()
+                            $("div.confirm").show();
+                            return;
+
+                        case 3:
+                            $("div.form").hide()
+                            $("div.finished").show();
+                            var d = [];
+                            $(userData.groups).each(function (i, o) {
+                                d.push(o.d + "<br/>");
+                            });
+                            $("div.finished div.dgroups").html(d.join(""));
+
+                            if (userData.login.length > 0 &&
+                                userData.email.length > 0 &&
+                                userData.initials.length > 0 &&
+                                userData.groups.length > 0) {
+                                $("div.finished")
+                                    .find("[name=dinit]").val(userData.initials).end()
+                                    .find("[name=dlogin]").val(userData.login).end()
+                                    .find("[name=demail]").val(userData.email).end()
+                                    .find("a.allright").html("Все окей, перейти на сайт");
+                            }
+                            else $("a.allright")
+                                .html("Не все данные введены")
+                                .css("border-bottom", "1px solid rgb(216, 15, 15)")
+                                .css("color", "rgb(216, 15, 15)");
+                            return;
+                    }
+                },
+                ckeckpointNext: null,
+                ckeckpointPrev: null,
+            });
+
+            $("input[prev]").click(function () {
+                rmp.movePrev();
+            });
+
+            $("input[next]").click(function () {
+                var waypoint = rmp.currentPosition();
+                switch (waypoint) {
+                    case 0:
+                        $("div.account input[type=text],input[type=password],input[type=email]").each(function (i, o) {
+                            if ($(o).val().length == 0) {
+                                $(o).addClass("invalid");
+                            }
+                            else $(o).removeClass("invalid");
+                        });
+
+                        if ($("div.account input.invalid").length == 0) {
+                            userData.login = $("div.account input[name=login]").val();
+                            userData.email = $("div.account input[name=email]").val();
+                            rmp.moveNext();
+                        }
+                        break;
+
+                    case 1:
+                        userData.liveplace = $("div.personal input[name=bithplace]").val();
+                        userData.workplace = $("div.personal input[name=workplace]").val();
+                        userData.workpost = $("div.personal input[name=workpost]").val();
+                        userData.birth = $("div.personal select[name=birthday] option:selected").val() + "." +
+                                        $("div.personal select[name=birthmonth] option:selected").val() + "." +
+                                        $("div.personal select[name=birthyear] option:selected").val();
+
+                        var $initials = $("div.personal input[name=init]");
+                        if ($initials.val().length > 0) {
+                            userData.initials = $initials.val();
+                            $initials.removeClass("invalid");
+                            rmp.moveNext();
+                        }
+                        else $initials.addClass("invalid");
+
+                        break;
+
+                    case 2:
+                        userData.groups = [];
+                        $("div.confirm input[type=checkbox]:checked").each(function (i, o) {
+                            userData.groups.push({ i: $(o).val(), d: $(o).attr("d") });
+                        });
+                        if (userData.groups.length == 0) {
+                            var chk = $("div.confirm input[type=checkbox]:first").attr("checked", "checked");
+                            userData.groups.push({
+                                i: chk.val(),
+                                i: chk.html()
+                            });
+                        }
+                        rmp.moveNext();
+                        break;
+                }
+            });
+        });
+    </script>
+    <div id="rmp"></div>
+
+    <div class="form account" style="display: none;">
+        <h1>Учетные данные</h1>
+        <span class="label">Логин</span>
+        <input type="text" name="login">
+        <span class="label">Пароль</span>
+        <input type="password" name="passw">
+        <span class="label">Почтовый адрес</span>
+        <input type="email" name="email">
+        <div class="buttons">
+            <input type="button" next value="Продолжить &gt;">
+        </div>
+    </div>
+
+    <div class="form personal" style="display: none;">
+        <h1>Персональные данные</h1>
+        <span class="label">Инициалы</span>
+        <input type="text" name="init">
+        <span class="label">Место проживания</span>
+        <input type="text" name="bithplace">
+        <span class="label">Место работы</span>
+        <input type="text" name="workplace">
+        <span class="label">Должность</span>
+        <input type="text" name="workpost">
+        <span class="label">Дата рождения</span>
+        <div>
+            <div style="float:left">
+                <select name="birthday"></select>
+            </div>
+            <div style="float:left">
+                <select name="birthmonth">                    
+                    <option value="1">январь</option>
+                    <option value="2">февраль</option>
+                    <option value="3">март</option>
+                    <option value="4">апрель</option>
+                    <option value="5">май</option>
+                    <option value="6">июнь</option>
+                    <option value="7">июль</option>
+                    <option value="8">август</option>
+                    <option value="9">сентябрь</option>
+                    <option value="10">октябрь</option>
+                    <option value="11">ноябрь</option>
+                    <option value="12">декабрь</option>
+                </select>
+            </div>
+            <div style="float:left">
+                <select name="birthyear"></select>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="buttons">
+            <input type="button" next value="Продолжить &gt;">
+        </div>
+    </div>
+
+    <div class="form confirm" style="display: none;">
+        <div style="font-size:13px; color:#313131">
+            <div><input type="checkbox" value="2" d="Новости в мире" />Новости в мире</div>
+            <div><input type="checkbox" value="3" d="Политика" />Политика</div>
+            <div><input type="checkbox" value="4" d="IT-события" />IT-события</div>
+            <div><input type="checkbox" value="5" d="Наука и техника" />Наука и техника</div>
+            <div><input type="checkbox" value="6" d="Новкинки автопрома" />Новкинки автопрома</div>
+            <div><input type="checkbox" value="7" d="Новый год" />Новый год</div>
+        </div>    
+        <div class="buttons">
+            <input type="button" next value="Продолжить &gt;">
+        </div>
+    </div>
+
+    <div class="form finished" style="display: none;">
+            <h1>Завершение регистрации</h1>
+            <span class="label">Инициалы</span>
+            <input type="text" name="dinit" disabled>
+            <span class="label">Логин</span>
+            <input type="text" name="dlogin" disabled>
+            <span class="label">Почтовый адрес</span>
+            <input type="text" name="demail" disabled>
+            <span class="label">Группы подписки</span>
+            <div class="dgroups">
+
+            </div>
+            <div class="buttons">
+                <a class="allright" href="#" style="border-bottom: 1px solid #0094ff; color:#0094ff; text-decoration:none;"></a>
+            </div>
+        </div>
+</body>
+</html>
