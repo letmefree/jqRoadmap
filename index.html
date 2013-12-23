@@ -1,11 +1,12 @@
 ﻿<html>
 <head>
     <title>jQuery Roadmap plugin</title>
-    <script src="jQuery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="jquery.roadmap.js"></script>
     <link href="jquery.roadmap.css" rel="stylesheet" />
+    <script src="index.js"></script>
     <link href="index.css" rel="stylesheet" />
-    <link href="index.js" rel="stylesheet" />
+
 </head>
 <body>
     <script>
@@ -24,34 +25,33 @@
         $(function () {
 
             var rmp = $("#rmp").Roadmap({
-                width: 650,
-                allowJump: true,
-                checkpoints: [
-                    { text: "Учетные данные" },
-                    { text: "Персональные данные" },
-                    { text: "Интересующие ленты" },
-                    { text: "Завершение регистрации" }
-                ],
-                voyagerPosition: 0,
-                onInit: function () { $(".account").show(); },
-                checkpointClickEvent: function (waypoint) {
-                    switch (waypoint) {
-                        case 0:
+                width: 650,                         //ширина плагина в пикселях
+                allowJump: true,                    //позволяет перемещаться между чекпоинтами в произвольном порядке
+                checkpoints: [                      //массив чекпоинтов
+                    {
+                        text: "Учетные данные",
+                        hndl: function (i) {
                             $("div.form").hide()
                             $("div.account").show();
-                            return;
-
-                        case 1:
+                        }
+                    },
+                    {
+                        text: "Персональные данные",
+                        hndl: function (i) {
                             $("div.form").hide()
                             $("div.personal").show();
-                            return;
-
-                        case 2:
+                        }
+                    },
+                    {
+                        text: "Интересующие ленты",
+                        hndl: function (i) {
                             $("div.form").hide()
                             $("div.confirm").show();
-                            return;
-
-                        case 3:
+                        }
+                    },
+                    {
+                        text: "Завершение регистрации",
+                        hndl: function (i) {
                             $("div.form").hide()
                             $("div.finished").show();
                             var d = [];
@@ -74,19 +74,20 @@
                                 .html("Не все данные введены")
                                 .css("border-bottom", "1px solid rgb(216, 15, 15)")
                                 .css("color", "rgb(216, 15, 15)");
-                            return;
-                    }
-                },
-                ckeckpointNext: null,
-                ckeckpointPrev: null,
+                        }
+                    }],
+                voyagerPosition: 0,                 //Стартовое положение ползунка
+                onInit: null,                       //Хендлер, выполняющийся при инициализации
+                ckeckpointNext: function (i) { console.log("voyager pos:" + i); },               //Хендлер, выполняющийся при вызове $.Roadmap.MoveNext(), передается текущее положение
+                ckeckpointPrev: function (i) { console.log("voyager pos:" + i); },               //Хендлер, выполняющийся при вызове $.Roadmap.MovePrev(), передается текущее положение
             });
 
             $("input[prev]").click(function () {
-                rmp.movePrev();
+                rmp.MovePrev();
             });
 
             $("input[next]").click(function () {
-                var waypoint = rmp.currentPosition();
+                var waypoint = rmp.CurrentPosition();
                 switch (waypoint) {
                     case 0:
                         $("div.account input[type=text],input[type=password],input[type=email]").each(function (i, o) {
@@ -99,7 +100,7 @@
                         if ($("div.account input.invalid").length == 0) {
                             userData.login = $("div.account input[name=login]").val();
                             userData.email = $("div.account input[name=email]").val();
-                            rmp.moveNext();
+                            rmp.MoveNext();
                         }
                         break;
 
@@ -115,7 +116,7 @@
                         if ($initials.val().length > 0) {
                             userData.initials = $initials.val();
                             $initials.removeClass("invalid");
-                            rmp.moveNext();
+                            rmp.MoveNext();
                         }
                         else $initials.addClass("invalid");
 
@@ -130,10 +131,10 @@
                             var chk = $("div.confirm input[type=checkbox]:first").attr("checked", "checked");
                             userData.groups.push({
                                 i: chk.val(),
-                                i: chk.html()
+                                d: chk.attr("d")
                             });
                         }
-                        rmp.moveNext();
+                        rmp.MoveNext();
                         break;
                 }
             });

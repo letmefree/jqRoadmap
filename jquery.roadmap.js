@@ -86,10 +86,10 @@
                                 .find("div.marklabel").removeClass("active").end()
                                 .find("div.marklabel:eq(" + i + ")").addClass("active");
 
-                            /* вызываем callback, если он был задан (срабатывает при переходе на новый шаг) */
-                            if (options.checkpointClickEvent != null &&
-                                typeof (options.checkpointClickEvent) === "function") {
-                                options.checkpointClickEvent(voyagerPosition);
+                            /* callback, срабатывает при переходе текущий шаг */
+                            if (o.hndl != null &&
+                                typeof (o.hndl) === "function") {
+                                o.hndl(voyagerPosition);
                             }
                         }
                     });
@@ -126,46 +126,30 @@
                 .find(".road").width(roadLength).end()
                 .find(".checkpoint:eq(" + voyagerPosition + ")").prepend($voyager).end();
 
-
-
-            //debugger;
-            //$voyager.css("left", $(".checkpoint:eq(" + voyagerPosition + ")", $map).offset().left);
-
             $mark
                 .find(".marklabel:eq(" + voyagerPosition + ")").addClass("active").end()
                 .find(".marklabel").width(checkpointsTotalLength).end()
                 .find(".road").width(roadLength).end();   
 
-            debugger;
-
             /* 
-                если было назначен обработчик onInit, выполняем его
-                и все готово к отображению плагина
+                onInit handler, выполняем его
+                все готово к отображению плагина
             */
             if (options.onInit != null &&
                 typeof (options.onInit) === "function") {
                 options.onInit();
             }
-            $(this).show();
 
-            
-            /// Не актуально
-            ///*  
-            //    вызываем обработчик изменения шана, если он был задан
-            //    в данном случае работает по событию init, когда плагин был инициализирован первый раз
-            //*/
-            //if (options.checkpointClickEvent != null &&
-            //    typeof (options.checkpointClickEvent) === "function") {
-            //    options.checkpointClickEvent(voyagerPosition);
-            //}
+            $(this).show();
+            $map.find(".checkpoint").eq(voyagerPosition).trigger("click");
         };
 
 
         $.Roadmap.extend({
-            currentPosition: function () {
+            CurrentPosition: function () {
                 return voyagerPosition;
             },
-            moveNext: function () {
+            MoveNext: function () {
 
                 if (voyagerPosition + 1 < options.checkpoints.length) {
                     ++voyagerPosition;
@@ -177,7 +161,7 @@
                     }                    
                 }
             },
-            movePrev: function () {
+            MovePrev: function () {
 
                 if (voyagerPosition - 1 >= 0) {
                     --voyagerPosition;

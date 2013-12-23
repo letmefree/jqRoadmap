@@ -40,6 +40,7 @@ div.roadmap
             -webkit-transition: .2s -webkit-transform ease-in-out;
             padding: 1px 10px;
             height: 18px;
+            z-index:-1;
         }
 
         div.roadmap .map .road

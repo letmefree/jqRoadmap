@@ -1,0 +1,91 @@
+body
+{
+    font-family: Arial;
+    color: #595959;
+    font-size: 14px;
+}
+
+span.label
+{
+    display: block;
+    font-size: 11px;
+    color: #5F5F5F;
+    margin-top: 10px;
+}
+
+div.form
+{
+    width: 320px;
+    padding: 5px 15px 10px;
+    background: whitesmoke;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
+    margin:15px 0 10px;
+    border: 3px solid #F49B14;
+}
+
+div.form .dgroups
+{
+	border: 2px dashed #ddd;
+	background: white;
+	padding: 5px;
+	font-size: 13px;
+	color: #2B2B2B;
+	border-radius: 4px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+}
+
+    div.form h1
+    {        
+        font-weight: normal;
+        margin: 5px 0 15px;        
+        font-size: 24px;
+        color:#F49B14;
+    }
+
+    div.form .buttons { margin: 30px 0 5px; }
+
+        div.form div.buttons .left
+        {
+            float:left;
+        }
+
+        div.form div.buttons .right
+        {
+            float: right;
+            padding: 4px;
+            margin: 0 15px;
+        }
+
+            div.form div.buttons .right a
+            {
+                border-bottom: 1px dashed;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+input[type=text],input[type=password],input[type=tel], input[type=email]
+{
+    width: 100%;
+    border: 1px solid #DDD;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px 6px;
+    outline: none;
+    color: #1B1B1B;
+    font-size:15px;
+    margin:0;
+}
+
+input.invalid
+{    
+    border: 1px solid rgb(141, 29, 29);
+	color:rgb(141, 29, 29);
+}
+
