@@ -1,3 +1,14 @@
+/*
+ * jqRoadmap plugin for jQuery framework - simple guide for heavy road 2 all users & webmasters
+ *   (http://brainstorage.me/pushthebutton)
+ *
+ * Copyright (c) 2013 Evgeny Zacharov
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ * 
+ * $Version: 24/12/2013 r6
+ */
 (function ($) {  
     $.Roadmap = $.Roadmap || {};
     $.extend($.Roadmap, {
@@ -37,7 +48,8 @@
                 w += parseInt($obj.css("padding-right").replace(r, ""));
                 w += parseInt($obj.css("border-left-width").replace(r, ""));
                 w += parseInt($obj.css("border-right-width").replace(r, ""));
-
+                w += parseInt($obj.css("margin-left").replace(r, ""));
+                w += parseInt($obj.css("margin-right").replace(r, ""));
                 return w;
             }
         };
@@ -57,24 +69,15 @@
                 $checkpoint
                     .append($("<div>"))
                     .click(function (e) {
-                        if (options.allowJump ||
-                            !e.originalEvent) {
+                        if ((options.allowJump ||
+                            !e.originalEvent) &&
+                            $(e.target).closest(".voyager").length == 0) {
+                            
                             var ts = $(this),
                                 tsOffset = ts.offset(),
                                 rmOffset = $roadmap.offset();
 
                             voyagerPosition = i;
-                            /*
-                            странное поведение Chromium версии от 28.0.1482.0 (194616)
-                                $.css("-webkit-transform") не примен€етс€.  омментирую, да будет $.animate :-)
-
-                            $voyager
-                                .css("-webkit-transform", "translateX(" + (tsOffset.left - rmOffset.left - parseInt($map.css("padding-left"))) + "px")
-                                .css("-moz-transform", "translateX(" + (tsOffset.left - rmOffset.left - parseInt($map.css("padding-left"))) + "px")
-                                .css("-ms-transform", "translateX(" + (tsOffset.left - rmOffset.left - parseInt($map.css("padding-left"))) + "px")
-                                .css("-o-transform", "translateX(" + (tsOffset.left - rmOffset.left - parseInt($map.css("padding-left"))) + "px")
-                                .css("transform", "translateX(" + (tsOffset.left - rmOffset.left - parseInt($map.css("padding-left"))) + "px");
-                            */
                             if (voyagerOffset < 0) {
                                 voyagerOffset = $voyager.offset().left;
                                 $voyager.css("left", voyagerOffset);
@@ -96,13 +99,16 @@
 
                 $map.append($checkpoint);
 
-                if (i < options.checkpoints.length - 1)
+                if (i < options.checkpoints.length - 1) {
                     $map.append($("<div>").addClass("road"))
-                else $map.append($("<div>").addClass("clear"));
-
-                $mark
-                    .append($("<div>").addClass("marklabel").html(o.text))
-                    .append($("<div>").addClass("road"));
+                    $mark
+                        .append($("<div>").addClass("marklabel").html(o.text))
+                        .append($("<div>").addClass("road"));
+                }
+                else {
+                    $map.append($("<div>").addClass("clear"));
+                    $mark.append($("<div>").addClass("marklabel").html(o.text))
+                }
             });
 
             /* аппендим все созданные элементы на страницу*/
@@ -119,12 +125,14 @@
             checkpointsTotalLength += methods.determineWidth($checkpoint.find("div"));
             checkpointsTotalLength += methods.determineWidth($checkpoint);
 
-            roadLength = Math.floor((options.width - checkpointsTotalLength * 3) / (options.checkpoints.length));
-
+            roadLength = Math.floor((options.width - checkpointsTotalLength * 4) / 3);
+            roadLength -= methods.determineWidth($map);
+            roadLength -= methods.determineWidth($(".road", $map));
+            
             /* отрисовываем на документе */
             $map
                 .find(".road").width(roadLength).end()
-                .find(".checkpoint:eq(" + voyagerPosition + ")").prepend($voyager).end();
+                .find(".checkpoint").eq(voyagerPosition).prepend($voyager).end();
 
             $mark
                 .find(".marklabel:eq(" + voyagerPosition + ")").addClass("active").end()

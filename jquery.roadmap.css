@@ -28,6 +28,7 @@ div.roadmap
                 height: 18px;
                 border: 3px solid white;
                 border-radius: 40px;
+
             }
 
         div.roadmap .voyager
@@ -36,11 +37,9 @@ div.roadmap
             border: 2px solid white;
             border-radius: 13px;
             position:absolute;
-            -webkit-transform: translateX(0);
-            -webkit-transition: .2s -webkit-transform ease-in-out;
             padding: 1px 10px;
             height: 18px;
-            z-index:-1;
+            z-index:1;
         }
 
         div.roadmap .map .road
@@ -55,7 +54,7 @@ div.roadmap
     /* нижняя область с описанием карты */
     div.roadmap .mark
     {
-        font-size: 12px;
+        font-size: 11px;
         color: #979797;
     }
 

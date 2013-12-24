@@ -140,77 +140,81 @@
             });
         });
     </script>
-    <div id="rmp"></div>
+    <div class="content">
+        <h1>
+            jQuery Roadmap plugin
+        </h1>
+        <div id="rmp"></div>
 
-    <div class="form account" style="display: none;">
-        <h1>Учетные данные</h1>
-        <span class="label">Логин</span>
-        <input type="text" name="login">
-        <span class="label">Пароль</span>
-        <input type="password" name="passw">
-        <span class="label">Почтовый адрес</span>
-        <input type="email" name="email">
-        <div class="buttons">
-            <input type="button" next value="Продолжить &gt;">
-        </div>
-    </div>
-
-    <div class="form personal" style="display: none;">
-        <h1>Персональные данные</h1>
-        <span class="label">Инициалы</span>
-        <input type="text" name="init">
-        <span class="label">Место проживания</span>
-        <input type="text" name="bithplace">
-        <span class="label">Место работы</span>
-        <input type="text" name="workplace">
-        <span class="label">Должность</span>
-        <input type="text" name="workpost">
-        <span class="label">Дата рождения</span>
-        <div>
-            <div style="float:left">
-                <select name="birthday"></select>
+        <div class="form account" style="display: none;">
+            <h1>Учетные данные</h1>
+            <span class="label">Логин</span>
+            <input type="text" name="login">
+            <span class="label">Пароль</span>
+            <input type="password" name="passw">
+            <span class="label">Почтовый адрес</span>
+            <input type="email" name="email">
+            <div class="buttons">
+                <input type="button" next value="Продолжить &gt;">
             </div>
-            <div style="float:left">
-                <select name="birthmonth">                    
-                    <option value="1">январь</option>
-                    <option value="2">февраль</option>
-                    <option value="3">март</option>
-                    <option value="4">апрель</option>
-                    <option value="5">май</option>
-                    <option value="6">июнь</option>
-                    <option value="7">июль</option>
-                    <option value="8">август</option>
-                    <option value="9">сентябрь</option>
-                    <option value="10">октябрь</option>
-                    <option value="11">ноябрь</option>
-                    <option value="12">декабрь</option>
-                </select>
-            </div>
-            <div style="float:left">
-                <select name="birthyear"></select>
-            </div>
-            <div class="clear"></div>
         </div>
-        <div class="buttons">
-            <input type="button" next value="Продолжить &gt;">
-        </div>
-    </div>
 
-    <div class="form confirm" style="display: none;">
-        <div style="font-size:13px; color:#313131">
-            <div><input type="checkbox" value="2" d="Новости в мире" />Новости в мире</div>
-            <div><input type="checkbox" value="3" d="Политика" />Политика</div>
-            <div><input type="checkbox" value="4" d="IT-события" />IT-события</div>
-            <div><input type="checkbox" value="5" d="Наука и техника" />Наука и техника</div>
-            <div><input type="checkbox" value="6" d="Новкинки автопрома" />Новкинки автопрома</div>
-            <div><input type="checkbox" value="7" d="Новый год" />Новый год</div>
-        </div>    
-        <div class="buttons">
-            <input type="button" next value="Продолжить &gt;">
+        <div class="form personal" style="display: none;">
+            <h1>Персональные данные</h1>
+            <span class="label">Инициалы</span>
+            <input type="text" name="init">
+            <span class="label">Место проживания</span>
+            <input type="text" name="bithplace">
+            <span class="label">Место работы</span>
+            <input type="text" name="workplace">
+            <span class="label">Должность</span>
+            <input type="text" name="workpost">
+            <span class="label">Дата рождения</span>
+            <div>
+                <div style="float:left">
+                    <select name="birthday"></select>
+                </div>
+                <div style="float:left">
+                    <select name="birthmonth">                    
+                        <option value="1">январь</option>
+                        <option value="2">февраль</option>
+                        <option value="3">март</option>
+                        <option value="4">апрель</option>
+                        <option value="5">май</option>
+                        <option value="6">июнь</option>
+                        <option value="7">июль</option>
+                        <option value="8">август</option>
+                        <option value="9">сентябрь</option>
+                        <option value="10">октябрь</option>
+                        <option value="11">ноябрь</option>
+                        <option value="12">декабрь</option>
+                    </select>
+                </div>
+                <div style="float:left">
+                    <select name="birthyear"></select>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="buttons">
+                <input type="button" next value="Продолжить &gt;">
+            </div>
         </div>
-    </div>
 
-    <div class="form finished" style="display: none;">
+        <div class="form confirm" style="display: none;">
+            <div style="font-size:13px; color:#313131">
+                <div><input type="checkbox" value="2" d="Новости в мире" />Новости в мире</div>
+                <div><input type="checkbox" value="3" d="Политика" />Политика</div>
+                <div><input type="checkbox" value="4" d="IT-события" />IT-события</div>
+                <div><input type="checkbox" value="5" d="Наука и техника" />Наука и техника</div>
+                <div><input type="checkbox" value="6" d="Новкинки автопрома" />Новкинки автопрома</div>
+                <div><input type="checkbox" value="7" d="Новый год" />Новый год</div>
+            </div>    
+            <div class="buttons">
+                <input type="button" next value="Продолжить &gt;">
+            </div>
+        </div>
+
+        <div class="form finished" style="display: none;">
             <h1>Завершение регистрации</h1>
             <span class="label">Инициалы</span>
             <input type="text" name="dinit" disabled>
@@ -226,5 +230,7 @@
                 <a class="allright" href="#" style="border-bottom: 1px solid #0094ff; color:#0094ff; text-decoration:none;"></a>
             </div>
         </div>
+    </div>
+    
 </body>
 </html>
