@@ -1,4 +1,5 @@
-﻿<html>
+﻿
+<html>
 <head>
     <title>jQuery Roadmap plugin</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -27,33 +28,31 @@
             var rmp = $("#rmp").Roadmap({
                 width: 650,                         //ширина плагина в пикселях
                 allowJump: true,                    //позволяет перемещаться между чекпоинтами в произвольном порядке
+                formsContainer: "#rmp_forms",       //место, где находятся формы для заполнения
                 checkpoints: [                      //массив чекпоинтов
                     {
-                        text: "Учетные данные",
-                        hndl: function (i) {
-                            $("div.form").hide()
-                            $("div.account").show();
-                        }
+                        text: "Учетные данные",                        
+                        form: "div.account",
+                        validate: [                             //проверяем корректность введенных на форме данных
+                            {   item: "input[name=login]",      //селектор проверяемого поля
+                                pattern: /^[A-zА-я0-9]{5,}$/ }, //Regex паттерн проверки введенного значения
+                            { item: "input[name=passw]", pattern: /^[0-9]{3,5}$/ },
+                            { item: "input[name=email]", pattern: /^.+@.+\.[A-zА-я0-9]{1,10}$/ }
+                        ]
                     },
                     {
                         text: "Персональные данные",
-                        hndl: function (i) {
-                            $("div.form").hide()
-                            $("div.personal").show();
-                        }
+                        form: "div.personal",
+                        validate: [ { item: "input[name=init]", pattern: /^[A-zА-я0-9 ]{5,}$/ } ]
                     },
                     {
-                        text: "Интересующие ленты",
-                        hndl: function (i) {
-                            $("div.form").hide()
-                            $("div.confirm").show();
-                        }
+                        text: "Интересные каналы",
+                        form: "div.confirm",
                     },
                     {
                         text: "Завершение регистрации",
+                        form: "div.finished",
                         hndl: function (i) {
-                            $("div.form").hide()
-                            $("div.finished").show();
                             var d = [];
                             $(userData.groups).each(function (i, o) {
                                 d.push(o.d + "<br/>");
@@ -68,12 +67,9 @@
                                     .find("[name=dinit]").val(userData.initials).end()
                                     .find("[name=dlogin]").val(userData.login).end()
                                     .find("[name=demail]").val(userData.email).end()
-                                    .find("a.allright").html("Все окей, перейти на сайт");
+                                    .find("div.buttons input").removeClass("disabled");
                             }
-                            else $("a.allright")
-                                .html("Не все данные введены")
-                                .css("border-bottom", "1px solid rgb(216, 15, 15)")
-                                .css("color", "rgb(216, 15, 15)");
+                            else $("div.finished").find("div.buttons input").addClass("disabled");
                         }
                     }],
                 voyagerPosition: 0,                 //Стартовое положение ползунка
@@ -88,38 +84,22 @@
 
             $("input[next]").click(function () {
                 var waypoint = rmp.CurrentPosition();
+                
                 switch (waypoint) {
-                    case 0:
-                        $("div.account input[type=text],input[type=password],input[type=email]").each(function (i, o) {
-                            if ($(o).val().length == 0) {
-                                $(o).addClass("invalid");
-                            }
-                            else $(o).removeClass("invalid");
-                        });
-
-                        if ($("div.account input.invalid").length == 0) {
-                            userData.login = $("div.account input[name=login]").val();
-                            userData.email = $("div.account input[name=email]").val();
-                            rmp.MoveNext();
-                        }
+                    case 0:                        
+                        userData.login = $("div.account input[name=login]").val();
+                        userData.email = $("div.account input[name=email]").val();
                         break;
 
+                       
                     case 1:
+                        userData.initials = $("div.personal input[name=init]").val();
                         userData.liveplace = $("div.personal input[name=bithplace]").val();
                         userData.workplace = $("div.personal input[name=workplace]").val();
                         userData.workpost = $("div.personal input[name=workpost]").val();
                         userData.birth = $("div.personal select[name=birthday] option:selected").val() + "." +
                                         $("div.personal select[name=birthmonth] option:selected").val() + "." +
                                         $("div.personal select[name=birthyear] option:selected").val();
-
-                        var $initials = $("div.personal input[name=init]");
-                        if ($initials.val().length > 0) {
-                            userData.initials = $initials.val();
-                            $initials.removeClass("invalid");
-                            rmp.MoveNext();
-                        }
-                        else $initials.addClass("invalid");
-
                         break;
 
                     case 2:
@@ -133,11 +113,21 @@
                                 i: chk.val(),
                                 d: chk.attr("d")
                             });
-                        }
-                        rmp.MoveNext();
+                        }                
                         break;
                 }
+
+                rmp.MoveNext();
             });
+
+            $("#finishEM").click(function () {
+                if (!$(this).hasClass("disabled")) {
+                    alert("Registration completed, redirecting...");
+                    document.location.reload();
+                }
+            })
+
+            $("span#v").html(rmp.Version());
         });
     </script>
     <div class="content">
@@ -145,92 +135,191 @@
             jQuery Roadmap plugin
         </h1>
         <div id="rmp"></div>
-
-        <div class="form account" style="display: none;">
-            <h1>Учетные данные</h1>
-            <span class="label">Логин</span>
-            <input type="text" name="login">
-            <span class="label">Пароль</span>
-            <input type="password" name="passw">
-            <span class="label">Почтовый адрес</span>
-            <input type="email" name="email">
-            <div class="buttons">
-                <input type="button" next value="Продолжить &gt;">
-            </div>
-        </div>
-
-        <div class="form personal" style="display: none;">
-            <h1>Персональные данные</h1>
-            <span class="label">Инициалы</span>
-            <input type="text" name="init">
-            <span class="label">Место проживания</span>
-            <input type="text" name="bithplace">
-            <span class="label">Место работы</span>
-            <input type="text" name="workplace">
-            <span class="label">Должность</span>
-            <input type="text" name="workpost">
-            <span class="label">Дата рождения</span>
-            <div>
-                <div style="float:left">
-                    <select name="birthday"></select>
+        <div id="rmp_forms">
+            <div class="form account" role="form">
+                <h1>Учетные данные</h1>
+                <span class="label">Логин (не менее 5 символов)</span>
+                <input type="text" name="login">
+                <span class="label">Пароль (от 3 до 5 цифр)</span>
+                <input type="password" name="passw">
+                <span class="label">Почтовый адрес (user@domain.com)</span>
+                <input type="email" name="email">
+                <div class="buttons">
+                    <input type="button" next value="Продолжить &gt;">
                 </div>
-                <div style="float:left">
-                    <select name="birthmonth">                    
-                        <option value="1">январь</option>
-                        <option value="2">февраль</option>
-                        <option value="3">март</option>
-                        <option value="4">апрель</option>
-                        <option value="5">май</option>
-                        <option value="6">июнь</option>
-                        <option value="7">июль</option>
-                        <option value="8">август</option>
-                        <option value="9">сентябрь</option>
-                        <option value="10">октябрь</option>
-                        <option value="11">ноябрь</option>
-                        <option value="12">декабрь</option>
-                    </select>
+            </div>
+
+            <div class="form personal" role="form">
+                <h1>Персональные данные</h1>
+                <span class="label">Инициалы *</span>
+                <input type="text" name="init">
+                <span class="label">Место проживания</span>
+                <input type="text" name="bithplace">
+                <span class="label">Место работы</span>
+                <input type="text" name="workplace">
+                <span class="label">Должность</span>
+                <input type="text" name="workpost">
+                <span class="label">Дата рождения</span>
+                <div>
+                    <div style="float:left">
+                        <select name="birthday"></select>
+                    </div>
+                    <div style="float:left">
+                        <select name="birthmonth">
+                            <option value="1">январь</option>
+                            <option value="2">февраль</option>
+                            <option value="3">март</option>
+                            <option value="4">апрель</option>
+                            <option value="5">май</option>
+                            <option value="6">июнь</option>
+                            <option value="7">июль</option>
+                            <option value="8">август</option>
+                            <option value="9">сентябрь</option>
+                            <option value="10">октябрь</option>
+                            <option value="11">ноябрь</option>
+                            <option value="12">декабрь</option>
+                        </select>
+                    </div>
+                    <div style="float:left">
+                        <select name="birthyear"></select>
+                    </div>
+                    <div class="clear"></div>
                 </div>
-                <div style="float:left">
-                    <select name="birthyear"></select>
+                <div class="buttons">
+                    <input type="button" next value="Продолжить &gt;">
                 </div>
-                <div class="clear"></div>
             </div>
-            <div class="buttons">
-                <input type="button" next value="Продолжить &gt;">
+
+            <div class="form confirm" role="form">
+                <h1>Интересные каналы</h1>
+                <div style="font-size:13px; color:#313131">
+                    <div><input type="checkbox" value="2" d="Новости в мире" />Новости в мире</div>
+                    <div><input type="checkbox" value="3" d="Политика" />Политика</div>
+                    <div><input type="checkbox" value="4" d="IT-события" />IT-события</div>
+                    <div><input type="checkbox" value="5" d="Наука и техника" />Наука и техника</div>
+                    <div><input type="checkbox" value="6" d="Новкинки автопрома" />Новкинки автопрома</div>
+                    <div><input type="checkbox" value="7" d="Новый год" />Новый год</div>
+                </div>
+                <div class="buttons">
+                    <input type="button" next value="Продолжить &gt;">
+                </div>
+            </div>
+
+            <div class="form finished" role="form">
+                <h1>Завершение регистрации</h1>
+                <span class="label">Инициалы</span>
+                <input type="text" name="dinit" disabled>
+                <span class="label">Логин</span>
+                <input type="text" name="dlogin" disabled>
+                <span class="label">Почтовый адрес</span>
+                <input type="text" name="demail" disabled>
+                <span class="label">Группы подписки</span>
+                <div class="dgroups"></div>
+                <div class="buttons">
+                    <input type="button" value="Перейти на сайт" id="finishEM" class="disabled" />
+                </div>
             </div>
         </div>
 
-        <div class="form confirm" style="display: none;">
-            <div style="font-size:13px; color:#313131">
-                <div><input type="checkbox" value="2" d="Новости в мире" />Новости в мире</div>
-                <div><input type="checkbox" value="3" d="Политика" />Политика</div>
-                <div><input type="checkbox" value="4" d="IT-события" />IT-события</div>
-                <div><input type="checkbox" value="5" d="Наука и техника" />Наука и техника</div>
-                <div><input type="checkbox" value="6" d="Новкинки автопрома" />Новкинки автопрома</div>
-                <div><input type="checkbox" value="7" d="Новый год" />Новый год</div>
-            </div>    
-            <div class="buttons">
-                <input type="button" next value="Продолжить &gt;">
+        <div class="howto" style="margin:25px 0">
+            <h1>
+                Пример подключения
+            </h1>
+            Вставте на страницу ссылки на js и css файлы плагина
+            <div style="font: normal 13px Monaco; background: whitesmoke; border: 1px dashed #ddd; padding: 10px 15px; margin: 10px 0; color: #c23fd5;">
+                &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"&gt;&lt;/script&gt;<br/>
+                &lt;script src="http://letmefree.github.io/jquery.roadmap.js"&gt;&lt;/script&gt;<br />
+                &lt;link href="http://letmefree.github.io/jquery.roadmap.css" rel="stylesheet" /&gt;
+            </div>
+            Добавте элемент div, в котором будет отображаться плагин
+            <div style="font: normal 13px Monaco; background: whitesmoke; border: 1px dashed #ddd; padding: 10px 15px; margin: 10px 0; color: #c23fd5;">
+                &lt;div id="rmp"&gt; &lt;/div&gt;
+            </div>
+            Инициализируйте плагин (инициализация происходит по событию $(document).ready)
+            <div style="font: normal 13px Monaco; background: whitesmoke; border: 1px dashed #ddd; padding: 10px 15px; margin: 10px 0; color: #c23fd5;">
+                $function() {<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; var rmp = $("#rmp").Roadmap();<br/>
+                }
             </div>
         </div>
 
-        <div class="form finished" style="display: none;">
-            <h1>Завершение регистрации</h1>
-            <span class="label">Инициалы</span>
-            <input type="text" name="dinit" disabled>
-            <span class="label">Логин</span>
-            <input type="text" name="dlogin" disabled>
-            <span class="label">Почтовый адрес</span>
-            <input type="text" name="demail" disabled>
-            <span class="label">Группы подписки</span>
-            <div class="dgroups">
-
-            </div>
-            <div class="buttons">
-                <a class="allright" href="#" style="border-bottom: 1px solid #0094ff; color:#0094ff; text-decoration:none;"></a>
+        <div class="howto" style="margin:25px 0">
+            <h1>
+                Настройки
+            </h1>
+            Для настройки плагина используйте набор параметров, задаваемых при инициалиции
+            <div style="font: normal 13px Monaco; background: whitesmoke; border: 1px dashed #ddd; padding: 10px 15px; margin: 10px 0; color: #c23fd5;">
+                <table style="" cellpadding="1" cellspacing="1">
+                    <tr style="background:whitesmoke">
+                        <th width="15%">Параметр</th>
+                        <th width="15%">Значение по умолч.</th>
+                        <th width="70%">Описание</th>
+                    </tr>
+                    <tr>
+                        <td>onInit</td>
+                        <td>null</td>
+                        <td>
+                            Хендлер, вызываемый при инициализации плагина. 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>allowJump</td>
+                        <td>true</td>
+                        <td>
+                            Определяет возможность перехода между формами в произвольном порядке 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>voyagerSpeed</td>
+                        <td>300</td>
+                        <td>
+                            Скорость перемещения ползунка по карте
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>voyagerPosition</td>
+                        <td>0</td>
+                        <td>
+                            Начальное положение ползунка на карте
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>formsContainer</td>
+                        <td>""</td>
+                        <td>
+                            Контейнер, где расположены формы, необходимые для заполнения. В качестве значение задается jQuery селектор (например "div.account")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>checkpoints</td>
+                        <td>[]</td>
+                        <td>
+                            Массив участков, необхоидмых для завершения регистрации.<br/>
+                            [{<br/>
+                                &nbsp;&nbsp;&nbsp;text: "Учетные данные",<br />
+                                &nbsp;&nbsp;&nbsp;form: "div.account",<br />
+                                &nbsp;&nbsp;&nbsp;validate: [{ item: "input[name=login]", pattern: /^[A-zА-я0-9]{5,}$/ }]<br />
+                            }]<br/>
+                            <br/>
+                            <br/>
+                            Где<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text - заголовок участка,<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;form - соответствующая форма участка,<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;validate - массив селекторов <i>item</i> текстовых полей и шаблонов <i>pattern</i> для проверки корректности введенных пользователем данных на текущей форме
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
+        <br />
+        <br />
+        <br />
     </div>
+    <div style="background: white; width: 650px; margin: -50px auto;"></div>
+    <footer>
+        jQuery Roadmap plugin v:<span id="v"></span><br/>
+        Source code under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a> and <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> licenses
+    </footer>
     
 </body>
 </html>

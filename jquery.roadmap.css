@@ -75,3 +75,11 @@ div.roadmap
             width:135px;
             padding:1px;
         }
+
+
+input[type=password].invalid, input[type=text].invalid, input[type=email].invalid
+{
+	border: 1px solid rgb(141, 29, 29);
+	color:#FFF;
+	background:url(lengthfailed.png) repeat-x;	
+}

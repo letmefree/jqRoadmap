@@ -8,6 +8,18 @@ body
     background:whitesmoke;
 }
 
+a
+{
+    color:rgb(0, 148, 255);
+    border:0;
+    text-decoration:none;
+}
+
+a:hover
+{    
+    border-bottom:1px solid;    
+}
+
 div.content
 {
     margin:0 auto; 
@@ -16,7 +28,7 @@ div.content
     background:white;
     border-left:1px solid #ddd;
     border-right:1px solid #ddd;
-    height:100%;
+    margin-bottom:50px;
 }
 
     div.content h1
@@ -47,6 +59,7 @@ div.form
     margin:15px 0 10px;
     border: 3px solid #F49B14;
     margin:35px auto 0;
+	display:none;
 }
 
 div.form .dgroups
@@ -106,9 +119,44 @@ input[type=text],input[type=password],input[type=tel], input[type=email]
     margin:0;
 }
 
-input.invalid
-{    
-    border: 1px solid rgb(141, 29, 29);
-	color:rgb(141, 29, 29);
+.disabled
+{
+    opacity:0.6;
 }
 
+.disabled:hover
+{
+    
+}
+
+
+span#v
+{
+    font-style:italic;
+}
+
+footer
+{
+    background: white;
+    width: 650px;
+    padding: 8px 15px;
+    margin: 0 auto;
+    height: 30px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-top: 1px solid whitesmoke;
+    font-size: 12px;
+    color: #3D3D3D;
+    text-align: center;
+}
+
+table
+{
+    background:#ccc;
+    font:normal 12px Tahoma;
+}
+
+table tr
+{
+    background:white;
+}
