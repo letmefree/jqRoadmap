@@ -27,17 +27,18 @@
 
             var rmp = $("#rmp").Roadmap({
                 width: 650,                         //ширина плагина в пикселях
-                allowJump: true,                    //позволяет перемещаться между чекпоинтами в произвольном порядке
+                allowJump: false,                    //позволяет перемещаться между чекпоинтами в произвольном порядке
                 formsContainer: "#rmp_forms",       //место, где находятся формы для заполнения
                 checkpoints: [                      //массив чекпоинтов
                     {
                         text: "Учетные данные",                        
                         form: "div.account",
-                        validate: [                             //проверяем корректность введенных на форме данных
-                            {   item: "input[name=login]",      //селектор проверяемого поля
-                                pattern: /^[A-zА-я0-9]{5,}$/ }, //Regex паттерн проверки введенного значения
-                            { item: "input[name=passw]", pattern: /^[0-9]{3,5}$/ },
-                            { item: "input[name=email]", pattern: /^.+@.+\.[A-zА-я0-9]{1,10}$/ }
+                        validate: [                             													//проверяем корректность введенных на форме данных
+                            {   item: "input[name=login]",      													//селектор проверяемого поля
+                                pattern: /^[A-zА-я0-9]{5,}$/,														//Regex паттерн проверки введенного значения
+								handler: function(s) { console.log("input[name=login] validate:" + s);}	}, 			//Callback срабатывающий при валидации поля, возвращает результат true\false
+                            { item: "input[name=passw]", pattern: /^[0-9]{3,5}$/, handler: function(s) { console.log("input[name=passw] validate:" + s);}},
+                            { item: "input[name=email]", pattern: /^.+@.+\.[A-zА-я0-9]{1,10}$/, handler: function(s) { console.log("input[name=email] validate:" + s);} }
                         ]
                     },
                     {
@@ -72,10 +73,10 @@
                             else $("div.finished").find("div.buttons input").addClass("disabled");
                         }
                     }],
-                voyagerPosition: 0,                 //Стартовое положение ползунка
-                onInit: null,                       //Хендлер, выполняющийся при инициализации
-                ckeckpointNext: function (i) { console.log("voyager pos:" + i); },               //Хендлер, выполняющийся при вызове $.Roadmap.MoveNext(), передается текущее положение
-                ckeckpointPrev: function (i) { console.log("voyager pos:" + i); },               //Хендлер, выполняющийся при вызове $.Roadmap.MovePrev(), передается текущее положение
+                voyagerPosition: 0,                 												//Стартовое положение ползунка
+                onInit: null,                       												//Хендлер, выполняющийся при инициализации
+                ckeckpointNext: function (i) { console.log("voyager pos:" + i); },               	//Хендлер, выполняющийся при вызове $.Roadmap.MoveNext(), передается текущее положение
+                ckeckpointPrev: function (i) { console.log("voyager pos:" + i); },               	//Хендлер, выполняющийся при вызове $.Roadmap.MovePrev(), передается текущее положение
             });
 
             $("input[prev]").click(function () {
@@ -266,7 +267,7 @@
                         <td>allowJump</td>
                         <td>true</td>
                         <td>
-                            Определяет возможность перехода между формами в произвольном порядке 
+                            Определяет возможность перехода между формами в произвольном порядке<br/><br/><i>(если true - переход на новую форму с помощью клика на карте не возможен, переход осуществляется методом MoveNext(). Возврат к предыдущей форме возможен не зависимо от заданного значения allowJump)</i>
                         </td>
                     </tr>
                     <tr>
@@ -290,7 +291,7 @@
                             Контейнер, где расположены формы, необходимые для заполнения. В качестве значение задается jQuery селектор (например "div.account")
                         </td>
                     </tr>
-                    <tr>
+                    <tr>					
                         <td>checkpoints</td>
                         <td>[]</td>
                         <td>
@@ -298,14 +299,21 @@
                             [{<br/>
                                 &nbsp;&nbsp;&nbsp;text: "Учетные данные",<br />
                                 &nbsp;&nbsp;&nbsp;form: "div.account",<br />
-                                &nbsp;&nbsp;&nbsp;validate: [{ item: "input[name=login]", pattern: /^[A-zА-я0-9]{5,}$/ }]<br />
+                                &nbsp;&nbsp;&nbsp;validate: [{ item: "input[name=login]", pattern: /^[A-zА-я0-9]{5,}$/, validate: function(validState){} }]<br />
                             }]<br/>
                             <br/>
                             <br/>
-                            Где<br/>
+                            Где:<br/>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text - заголовок участка,<br/>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;form - соответствующая форма участка,<br/>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;validate - массив селекторов <i>item</i> текстовых полей и шаблонов <i>pattern</i> для проверки корректности введенных пользователем данных на текущей форме
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;validate - [<i>item</i> селектор текстовых полей (расположенных на форме form) <i>pattern</i> Regex паттерн проверки корректности введенных данных; <i>handler</i> - callback, срабатывающий при валидации формы и принимающий значение true/false валидности данных согласно паттерну]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td>400</td>
+                        <td>
+                            Ширина плагина, указывается в пикселях (px)
                         </td>
                     </tr>
                 </table>

@@ -7,7 +7,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  * 
- * $Version: 24/12/2013 r6
+ * $Version: 20/01/2014 r8
  */
 (function ($) {  
     $.Roadmap = $.Roadmap || {};
@@ -96,8 +96,7 @@
                 $checkpoint
                     .append($("<div>"))
                     .click(function (e) {
-                        if ((options.allowJump ||
-                            !e.originalEvent) &&
+                        if (((options.allowJump || !e.originalEvent) || (!options.allowJump && voyagerPosition > i)) &&
                             $(e.target).closest(".voyager").length == 0) {
                             
                             var ts = $(this),
@@ -125,7 +124,7 @@
                                 .find("div.marklabel").removeClass("active").end()
                                 .find("div.marklabel:eq(" + i + ")").addClass("active");
 
-                            /* callback, срабатывает при переходе текущий шаг */
+                            /* callback, срабатывает при переходе текущий шаг и возвращает текущую позицию на карте */
                             if (o.hndl != null &&
                                 typeof (o.hndl) === "function") {
                                 o.hndl(voyagerPosition);
@@ -206,6 +205,9 @@
                             var $object = $(item.item);
                             if ($object.length > 0) {
                                 validateState = methods.validateInput($object, item.pattern);
+                                if (typeof (item.handler) === "function") {
+                                    item.handler(validateState);
+                                };
                             }
                         });
 
@@ -216,7 +218,6 @@
 
                     ++voyagerPosition;
                     $("div.roadmap .checkpoint:eq(" + voyagerPosition + ")").trigger("click");
-
 
                     if (typeof (options.ckeckpointNext) === "function") {
                         options.ckeckpointNext(voyagerPosition);
